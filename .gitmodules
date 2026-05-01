@@ -1,0 +1,7 @@
+[submodule "extern/xbyak"]
+	path = extern/xbyak
+	url = https://github.com/herumi/xbyak.git
+
+[submodule "extern/hwloc"]
+	path = extern/hwloc
+	url = https://github.com/open-mpi/hwloc.git
