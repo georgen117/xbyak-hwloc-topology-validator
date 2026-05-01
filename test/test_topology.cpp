@@ -30,6 +30,9 @@
 #include <limits.h>
 
 // -- xbyak --------------------------------------------------------------------
+// Use the no-exception build so topology init failures are returned as error
+// codes rather than thrown. Check Xbyak::GetError() after construction.
+#define XBYAK_NO_EXCEPTION
 #include "xbyak/xbyak_util.h"
 
 // -- hwloc --------------------------------------------------------------------
@@ -424,7 +427,16 @@ int main(void)
     printf("=== cpu-topology-test: xbyak vs hwloc ===\n\n");
 
     Xbyak::util::Cpu cpu;
+    Xbyak::ClearError();
     Xbyak::util::CpuTopology xTopo(cpu);
+    {
+        int xErr = Xbyak::GetError();
+        if (xErr != 0) {
+            fprintf(stderr, "ERROR  CpuTopology init failed: %s\n",
+                    Xbyak::ConvertErrorToString(xErr));
+            return 2;
+        }
+    }
 
     hwloc_topology_t hTopo;
     if (hwloc_topology_init(&hTopo) < 0) {
